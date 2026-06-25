@@ -1,0 +1,40 @@
+const EARTH_RADIUS_MILES = 3958.8;
+const EARTH_RADIUS_KM = 6371;
+
+/** Great-circle distance between two lat/lng points in miles. */
+export function haversineDistance(
+  lat1: number,
+  lon1: number,
+  lat2: number,
+  lon2: number,
+  unit: "miles" | "km" = "miles"
+): number {
+  const R = unit === "miles" ? EARTH_RADIUS_MILES : EARTH_RADIUS_KM;
+
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLon / 2) ** 2;
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+}
+
+function toRad(degrees: number): number {
+  return (degrees * Math.PI) / 180;
+}
+
+/** Returns true if the competition is within the user's chosen radius. */
+export function isWithinRadius(
+  userLat: number,
+  userLon: number,
+  compLat: number,
+  compLon: number,
+  radiusMiles: number // -1 = unlimited
+): boolean {
+  if (radiusMiles === -1) return true;
+  return haversineDistance(userLat, userLon, compLat, compLon) <= radiusMiles;
+}
