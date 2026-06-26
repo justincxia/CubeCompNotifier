@@ -23,8 +23,8 @@ export default function AboutPage() {
 
       {/* Main */}
       <main className="flex flex-1 items-center justify-center">
-        <div className="w-[100px]">
-          <p className="text-xs text-gray-700 leading-relaxed">
+        <div className="w-[500px]">
+          <p className="text-lg text-black leading-relaxed">
             CubeComp Notifier sends you an SMS whenever a new World Cube Association competition is announced near you. Enter your location, pick a radius, and we handle the rest.
           </p>
         </div>

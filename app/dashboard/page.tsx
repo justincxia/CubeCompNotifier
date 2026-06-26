@@ -8,20 +8,20 @@ export const metadata = {
 
 export default function DashboardPage() {
   return (
-    <div className="min-h-screen bg-zinc-950 flex flex-col">
-      <div className="border-b border-zinc-900 px-4 h-14 flex items-center">
+    <div className="min-h-screen bg-white flex flex-col">
+      <header className="border-b border-gray-200 px-6 h-14 flex items-center">
         <Link
           href="/"
-          className="flex items-center gap-2 text-sm text-zinc-400 hover:text-white transition-colors"
+          className="flex items-center gap-2 text-sm text-gray-900 hover:text-gray-600 transition-colors"
         >
           <ArrowLeft className="h-4 w-4" />
           CubeComp Notifier
         </Link>
-      </div>
+      </header>
 
       <div className="flex flex-1 items-start justify-center px-4 py-12">
         <div className="w-full max-w-md">
-          <div className="rounded-xl border border-zinc-800 bg-zinc-900/30 p-6">
+          <div className="rounded-xl border border-gray-200 p-6">
             <DashboardClient />
           </div>
         </div>

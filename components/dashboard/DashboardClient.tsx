@@ -5,8 +5,6 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
 import {
-  Bell,
-  BellOff,
   CalendarDays,
   Loader2,
   LogOut,
@@ -26,8 +24,6 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { toast } from "@/lib/use-toast";
 import { loginSchema, updateUserSchema, type LoginInput, type UpdateUserInput } from "@/lib/validations";
 import { NOTIFICATION_RADII, RADIUS_LABELS, type User, type Competition } from "@/types";
@@ -55,12 +51,9 @@ export function DashboardClient() {
     resolver: zodResolver(updateUserSchema),
   });
 
-  // Auto-login if phone is stored from registration
   useEffect(() => {
     const stored = localStorage.getItem("user_phone");
-    if (stored) {
-      fetchUser(stored);
-    }
+    if (stored) fetchUser(stored);
   }, []);
 
   async function fetchUser(phoneNumber: string) {
@@ -86,9 +79,7 @@ export function DashboardClient() {
   }
 
   async function fetchNearby(lat: number, lon: number, radius: number) {
-    const res = await fetch(
-      `/api/nearby?lat=${lat}&lon=${lon}&radius=${radius}&limit=10`
-    );
+    const res = await fetch(`/api/nearby?lat=${lat}&lon=${lon}&radius=${radius}&limit=10`);
     if (res.ok) {
       const { competitions } = await res.json();
       setNearbyComps(competitions ?? []);
@@ -166,18 +157,13 @@ export function DashboardClient() {
     });
     if (res.ok) {
       setUser({ ...user, is_paused: newPaused });
-      toast({
-        title: newPaused ? "Notifications paused" : "Notifications resumed",
-        variant: "success",
-      });
+      toast({ title: newPaused ? "Notifications paused" : "Notifications resumed", variant: "success" });
     }
   }
 
   async function onDeleteAccount() {
     if (!user) return;
-    const res = await fetch(`/api/user?phone=${encodeURIComponent(user.phone_number)}`, {
-      method: "DELETE",
-    });
+    const res = await fetch(`/api/user?phone=${encodeURIComponent(user.phone_number)}`, { method: "DELETE" });
     if (res.ok) {
       localStorage.removeItem("user_phone");
       toast({ title: "Account deleted", variant: "success" });
@@ -193,13 +179,13 @@ export function DashboardClient() {
     setOtp("");
   }
 
-  // ─── Phone login step ───────────────────────────────────────────────────────
+  // ─── Phone login ────────────────────────────────────────────────────────────
   if (authStep === "phone") {
     return (
-      <div className="flex flex-col gap-6 animate-fade-in">
+      <div className="flex flex-col gap-6">
         <div className="text-center">
-          <h2 className="text-lg font-semibold text-white">Access your dashboard</h2>
-          <p className="text-sm text-zinc-400 mt-1">Enter your phone number to receive a login code</p>
+          <h2 className="text-lg font-semibold text-black">Access your dashboard</h2>
+          <p className="text-sm text-gray-500 mt-1">Enter your phone number to receive a login code</p>
         </div>
 
         <form onSubmit={loginForm.handleSubmit(onLoginSubmit)} className="flex flex-col gap-4">
@@ -212,9 +198,7 @@ export function DashboardClient() {
               {...loginForm.register("phone_number")}
             />
             {loginForm.formState.errors.phone_number && (
-              <p className="text-xs text-red-400">
-                {loginForm.formState.errors.phone_number.message}
-              </p>
+              <p className="text-xs text-red-500">{loginForm.formState.errors.phone_number.message}</p>
             )}
           </div>
           <Button type="submit" variant="primary" disabled={isLoading} className="w-full">
@@ -222,29 +206,27 @@ export function DashboardClient() {
           </Button>
         </form>
 
-        <p className="text-center text-xs text-zinc-600">
+        <p className="text-center text-xs text-gray-400">
           Don&apos;t have an account?{" "}
-          <a href="/register" className="text-indigo-400 hover:text-indigo-300">
-            Sign up here
-          </a>
+          <a href="/register" className="text-black underline hover:text-gray-600">Sign up here</a>
         </p>
       </div>
     );
   }
 
-  // ─── OTP verification step ──────────────────────────────────────────────────
+  // ─── OTP step ───────────────────────────────────────────────────────────────
   if (authStep === "otp") {
     return (
-      <div className="flex flex-col gap-6 animate-fade-in">
+      <div className="flex flex-col gap-6">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-              <Phone className="h-5 w-5 text-indigo-400" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 border border-gray-200">
+              <Phone className="h-5 w-5 text-gray-600" />
             </div>
           </div>
-          <h2 className="text-lg font-semibold text-white">Enter your code</h2>
-          <p className="text-sm text-zinc-400 mt-1">
-            Sent to <span className="text-white font-mono">{phone}</span>
+          <h2 className="text-lg font-semibold text-black">Enter your code</h2>
+          <p className="text-sm text-gray-500 mt-1">
+            Sent to <span className="text-black font-mono">{phone}</span>
           </p>
         </div>
 
@@ -261,18 +243,13 @@ export function DashboardClient() {
           />
         </div>
 
-        <Button
-          variant="primary"
-          onClick={onOtpSubmit}
-          disabled={isLoading || otp.length < 6}
-          className="w-full"
-        >
+        <Button variant="primary" onClick={onOtpSubmit} disabled={isLoading || otp.length < 6} className="w-full">
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Access Dashboard"}
         </Button>
 
         <button
           type="button"
-          className="text-xs text-zinc-500 hover:text-zinc-300 text-center"
+          className="text-xs text-gray-400 hover:text-gray-700 text-center transition-colors"
           onClick={() => setAuthStep("phone")}
         >
           Use a different number
@@ -285,19 +262,19 @@ export function DashboardClient() {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col gap-6 animate-fade-in">
+    <div className="flex flex-col gap-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-lg font-semibold text-white">Your settings</h2>
-          <p className="text-xs text-zinc-500 mt-0.5 font-mono">{user.phone_number}</p>
+          <h2 className="text-lg font-semibold text-black">Your settings</h2>
+          <p className="text-xs text-gray-400 mt-0.5 font-mono">{user.phone_number}</p>
         </div>
         <div className="flex items-center gap-2">
-          <Badge variant={user.is_paused ? "secondary" : "success"}>
+          <span className={`text-xs font-medium px-2 py-0.5 rounded-full border ${user.is_paused ? "text-gray-500 border-gray-300 bg-gray-50" : "text-green-700 border-green-200 bg-green-50"}`}>
             {user.is_paused ? "Paused" : "Active"}
-          </Badge>
+          </span>
           <Button variant="ghost" size="icon" onClick={onLogout} title="Log out">
-            <LogOut className="h-4 w-4" />
+            <LogOut className="h-4 w-4 text-gray-500" />
           </Button>
         </div>
       </div>
@@ -305,9 +282,9 @@ export function DashboardClient() {
       {/* Settings form */}
       <form onSubmit={settingsForm.handleSubmit(onSaveSettings)} className="flex flex-col gap-5">
         {/* Location */}
-        <div className="rounded-lg border border-zinc-800 bg-zinc-900/30 p-4 flex flex-col gap-4">
-          <div className="flex items-center gap-2 text-xs text-zinc-400">
-            <MapPin className="h-3.5 w-3.5 text-indigo-400" />
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 flex flex-col gap-4">
+          <div className="flex items-center gap-2 text-xs text-gray-500">
+            <MapPin className="h-3.5 w-3.5 text-gray-400" />
             Location
           </div>
 
@@ -333,120 +310,81 @@ export function DashboardClient() {
           <Label>Notification radius</Label>
           <Select
             value={String(settingsForm.watch("notification_radius") ?? user.notification_radius)}
-            onValueChange={(v) =>
-              settingsForm.setValue("notification_radius", parseInt(v))
-            }
+            onValueChange={(v) => settingsForm.setValue("notification_radius", parseInt(v))}
           >
             <SelectTrigger>
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
               {NOTIFICATION_RADII.map((r) => (
-                <SelectItem key={r} value={String(r)}>
-                  {RADIUS_LABELS[r]}
-                </SelectItem>
+                <SelectItem key={r} value={String(r)}>{RADIUS_LABELS[r]}</SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
         {/* Pause toggle */}
-        <div className="flex items-center justify-between rounded-lg border border-zinc-800 bg-zinc-900/30 px-4 py-3">
+        <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-4 py-3">
           <div>
-            <p className="text-sm font-medium text-white">Pause notifications</p>
-            <p className="text-xs text-zinc-500">Temporarily stop receiving SMS alerts</p>
+            <p className="text-sm font-medium text-black">Pause notifications</p>
+            <p className="text-xs text-gray-500">Temporarily stop receiving SMS alerts</p>
           </div>
-          <Switch
-            checked={user.is_paused}
-            onCheckedChange={onTogglePause}
-          />
+          <Switch checked={user.is_paused} onCheckedChange={onTogglePause} />
         </div>
 
         <Button type="submit" variant="primary" disabled={isSaving} className="w-full">
-          {isSaving ? (
-            <Loader2 className="h-4 w-4 animate-spin" />
-          ) : (
-            <>
-              <Save className="h-4 w-4" /> Save Changes
-            </>
-          )}
+          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <><Save className="h-4 w-4" /> Save Changes</>}
         </Button>
       </form>
 
       {/* Nearby competitions */}
       {nearbyComps.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-base">
-              <CalendarDays className="h-4 w-4 text-indigo-400" />
+        <div className="rounded-xl border border-gray-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-gray-200">
+            <p className="text-sm font-semibold text-black flex items-center gap-2">
+              <CalendarDays className="h-4 w-4 text-gray-400" />
               Upcoming competitions near you
-            </CardTitle>
-            <CardDescription>Within {RADIUS_LABELS[user.notification_radius]}</CardDescription>
-          </CardHeader>
-          <CardContent className="flex flex-col gap-3">
+            </p>
+            <p className="text-xs text-gray-400 mt-0.5">Within {RADIUS_LABELS[user.notification_radius]}</p>
+          </div>
+          <div className="divide-y divide-gray-100">
             {nearbyComps.slice(0, 5).map((comp) => (
               <a
                 key={comp.id}
                 href={`https://www.worldcubeassociation.org/competitions/${comp.id}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="group flex items-start justify-between gap-3 rounded-lg border border-zinc-800 p-3 hover:border-zinc-700 hover:bg-zinc-800/30 transition-colors"
+                className="flex items-start justify-between gap-3 px-4 py-3 hover:bg-gray-50 transition-colors"
               >
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-white truncate group-hover:text-indigo-300 transition-colors">
-                    {comp.name}
-                  </p>
-                  <p className="text-xs text-zinc-500 mt-0.5">{comp.city}</p>
+                  <p className="text-sm font-medium text-black truncate">{comp.name}</p>
+                  <p className="text-xs text-gray-400 mt-0.5">{comp.city}</p>
                 </div>
                 <div className="text-right shrink-0">
-                  <p className="text-xs text-zinc-400">
-                    {formatDateRange(comp.start_date, comp.end_date)}
-                  </p>
-                  <p className="text-xs text-zinc-600">
-                    {Math.round(comp.distance)} mi away
-                  </p>
+                  <p className="text-xs text-gray-500">{formatDateRange(comp.start_date, comp.end_date)}</p>
+                  <p className="text-xs text-gray-400">{Math.round(comp.distance)} mi away</p>
                 </div>
               </a>
             ))}
-          </CardContent>
-        </Card>
+          </div>
+        </div>
       )}
 
       {/* Danger zone */}
-      <div className="rounded-lg border border-red-500/10 bg-red-500/5 p-4">
-        <p className="text-xs font-medium text-red-400 mb-3">Danger zone</p>
+      <div className="rounded-lg border border-red-200 bg-red-50 p-4">
+        <p className="text-xs font-medium text-red-600 mb-3">Danger zone</p>
         {!showDeleteConfirm ? (
-          <Button
-            variant="destructive"
-            size="sm"
-            onClick={() => setShowDeleteConfirm(true)}
-            className="w-full"
-          >
+          <Button variant="destructive" size="sm" onClick={() => setShowDeleteConfirm(true)} className="w-full">
             <Trash2 className="h-4 w-4" /> Delete account
           </Button>
         ) : (
           <div className="flex flex-col gap-2">
-            <p className="text-xs text-zinc-400">
-              This will delete your account and stop all notifications. This action is
-              permanent.
+            <p className="text-xs text-gray-600">
+              This will delete your account and stop all notifications. This action is permanent.
             </p>
             <div className="flex gap-2">
-              <Button
-                variant="destructive"
-                size="sm"
-                onClick={onDeleteAccount}
-                className="flex-1"
-              >
-                Yes, delete
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1"
-              >
-                Cancel
-              </Button>
+              <Button variant="destructive" size="sm" onClick={onDeleteAccount} className="flex-1">Yes, delete</Button>
+              <Button variant="outline" size="sm" onClick={() => setShowDeleteConfirm(false)} className="flex-1">Cancel</Button>
             </div>
           </div>
         )}
