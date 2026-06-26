@@ -15,7 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/lib/use-toast";
 import { registerSchema, verifyOtpSchema, type RegisterInput } from "@/lib/validations";
 import { NOTIFICATION_RADII, RADIUS_LABELS } from "@/types";
 
@@ -27,6 +26,8 @@ export function RegisterForm() {
   const [isLoading, setIsLoading] = useState(false);
   const [submittedPhone, setSubmittedPhone] = useState("");
   const [otp, setOtp] = useState("");
+  const [formError, setFormError] = useState("");
+  const [verifyError, setVerifyError] = useState("");
 
   const form = useForm<RegisterInput>({
     resolver: zodResolver(registerSchema),
@@ -42,6 +43,7 @@ export function RegisterForm() {
   const { register, handleSubmit, setValue, watch, formState: { errors } } = form;
 
   async function onSubmitDetails(data: RegisterInput) {
+    setFormError("");
     setIsLoading(true);
     try {
       const res = await fetch("/api/register", {
@@ -49,15 +51,24 @@ export function RegisterForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(data),
       });
-      const json = await res.json();
+
+      let json: { error?: string; message?: string } = {};
+      try {
+        json = await res.json();
+      } catch {
+        setFormError("Server returned an unexpected response. Please try again.");
+        return;
+      }
 
       if (!res.ok) {
-        toast({ title: "Error", description: json.error, variant: "destructive" });
+        setFormError(json.error ?? "Something went wrong. Please try again.");
         return;
       }
 
       setSubmittedPhone(data.phone_number);
       setStep("verify");
+    } catch {
+      setFormError("Could not reach the server. Check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -66,10 +77,11 @@ export function RegisterForm() {
   async function onVerifyOtp() {
     const parsed = verifyOtpSchema.safeParse({ phone_number: submittedPhone, code: otp });
     if (!parsed.success) {
-      toast({ title: "Invalid code", description: parsed.error.errors[0].message, variant: "destructive" });
+      setVerifyError(parsed.error.errors[0].message);
       return;
     }
 
+    setVerifyError("");
     setIsLoading(true);
     try {
       const res = await fetch("/api/verify", {
@@ -77,15 +89,24 @@ export function RegisterForm() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ phone_number: submittedPhone, code: otp }),
       });
-      const json = await res.json();
+
+      let json: { error?: string } = {};
+      try {
+        json = await res.json();
+      } catch {
+        setVerifyError("Server returned an unexpected response. Please try again.");
+        return;
+      }
 
       if (!res.ok) {
-        toast({ title: "Verification failed", description: json.error, variant: "destructive" });
+        setVerifyError(json.error ?? "Verification failed. Please try again.");
         return;
       }
 
       localStorage.setItem("user_phone", submittedPhone);
       setStep("success");
+    } catch {
+      setVerifyError("Could not reach the server. Check your connection and try again.");
     } finally {
       setIsLoading(false);
     }
@@ -148,6 +169,12 @@ export function RegisterForm() {
         >
           {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : "Confirm & Activate"}
         </Button>
+
+        {verifyError && (
+          <p className="text-sm text-red-600 text-center bg-red-50 border border-red-200 rounded-md px-3 py-2">
+            {verifyError}
+          </p>
+        )}
 
         <button
           type="button"
@@ -230,6 +257,12 @@ export function RegisterForm() {
           <p className="text-xs text-red-500">{errors.notification_radius.message}</p>
         )}
       </div>
+
+      {formError && (
+        <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+          {formError}
+        </p>
+      )}
 
       <Button
         type="submit"

@@ -35,9 +35,9 @@ const Toast = React.forwardRef<
         "group pointer-events-auto relative flex w-full items-center justify-between gap-4 overflow-hidden rounded-lg border p-4 pr-8 shadow-lg transition-all",
         "data-[swipe=cancel]:translate-x-0 data-[swipe=end]:translate-x-[var(--radix-toast-swipe-end-x)] data-[swipe=move]:translate-x-[var(--radix-toast-swipe-move-x)] data-[swipe=move]:transition-none",
         "data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-80 data-[state=closed]:slide-out-to-right-full data-[state=open]:slide-in-from-bottom-full",
-        variant === "default" && "border-zinc-700 bg-zinc-900 text-white",
-        variant === "success" && "border-green-500/30 bg-green-500/10 text-green-300",
-        variant === "destructive" && "border-red-500/30 bg-red-500/10 text-red-300",
+        variant === "default" && "border-gray-200 bg-white text-gray-900",
+        variant === "success" && "border-green-200 bg-green-50 text-green-800",
+        variant === "destructive" && "border-red-200 bg-red-50 text-red-800",
         className
       )}
       {...props}
@@ -53,7 +53,7 @@ const ToastClose = React.forwardRef<
   <ToastPrimitives.Close
     ref={ref}
     className={cn(
-      "absolute right-2 top-2 rounded-md p-1 text-zinc-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-ring",
+      "absolute right-2 top-2 rounded-md p-1 text-gray-400 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-ring",
       className
     )}
     toast-close=""
@@ -82,7 +82,7 @@ const ToastDescription = React.forwardRef<
 >(({ className, ...props }, ref) => (
   <ToastPrimitives.Description
     ref={ref}
-    className={cn("text-xs text-zinc-400", className)}
+    className={cn("text-xs opacity-80", className)}
     {...props}
   />
 ));
