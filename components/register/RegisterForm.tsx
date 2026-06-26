@@ -84,7 +84,6 @@ export function RegisterForm() {
         return;
       }
 
-      // Store user phone in localStorage for dashboard access
       localStorage.setItem("user_phone", submittedPhone);
       setStep("success");
     } finally {
@@ -94,13 +93,13 @@ export function RegisterForm() {
 
   if (step === "success") {
     return (
-      <div className="flex flex-col items-center gap-6 py-8 text-center animate-fade-in">
-        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-500/10 border border-green-500/20">
-          <CheckCircle className="h-8 w-8 text-green-400" />
+      <div className="flex flex-col items-center gap-6 py-8 text-center">
+        <div className="flex h-16 w-16 items-center justify-center rounded-full bg-green-50 border border-green-200">
+          <CheckCircle className="h-8 w-8 text-green-600" />
         </div>
         <div>
-          <h2 className="text-xl font-semibold text-white mb-2">You&apos;re all set!</h2>
-          <p className="text-zinc-400 text-sm max-w-xs">
+          <h2 className="text-xl font-semibold text-black mb-2">You&apos;re all set!</h2>
+          <p className="text-gray-500 text-sm max-w-xs">
             We&apos;ll text you the moment a new WCA competition is announced near you.
           </p>
         </div>
@@ -113,17 +112,17 @@ export function RegisterForm() {
 
   if (step === "verify") {
     return (
-      <div className="flex flex-col gap-6 animate-fade-in">
+      <div className="flex flex-col gap-6">
         <div className="text-center">
           <div className="flex justify-center mb-4">
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-indigo-500/10 border border-indigo-500/20">
-              <Phone className="h-5 w-5 text-indigo-400" />
+            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gray-100 border border-gray-200">
+              <Phone className="h-5 w-5 text-gray-600" />
             </div>
           </div>
-          <h2 className="text-lg font-semibold text-white">Verify your number</h2>
-          <p className="text-sm text-zinc-400 mt-1">
+          <h2 className="text-lg font-semibold text-black">Verify your number</h2>
+          <p className="text-sm text-gray-500 mt-1">
             Enter the 6-digit code sent to{" "}
-            <span className="text-white font-mono">{submittedPhone}</span>
+            <span className="text-black font-mono">{submittedPhone}</span>
           </p>
         </div>
 
@@ -152,7 +151,7 @@ export function RegisterForm() {
 
         <button
           type="button"
-          className="text-xs text-zinc-500 hover:text-zinc-300 text-center transition-colors"
+          className="text-xs text-gray-400 hover:text-gray-700 text-center transition-colors"
           onClick={() => setStep("details")}
         >
           Back to edit details
@@ -173,47 +172,37 @@ export function RegisterForm() {
           {...register("phone_number")}
         />
         {errors.phone_number && (
-          <p className="text-xs text-red-400">{errors.phone_number.message}</p>
+          <p className="text-xs text-red-500">{errors.phone_number.message}</p>
         )}
-        <p className="text-xs text-zinc-500">International format required (e.g. +1 for US/Canada)</p>
+        <p className="text-xs text-gray-400">International format required (e.g. +1 for US/Canada)</p>
       </div>
 
       {/* Location */}
-      <div className="rounded-lg border border-zinc-800 bg-zinc-900/30 p-4 flex flex-col gap-4">
-        <div className="flex items-center gap-2 text-xs text-zinc-400 mb-1">
-          <MapPin className="h-3.5 w-3.5 text-indigo-400" />
+      <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 flex flex-col gap-4">
+        <div className="flex items-center gap-2 text-xs text-gray-500 mb-1">
+          <MapPin className="h-3.5 w-3.5 text-gray-400" />
           Your location
         </div>
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="city">City</Label>
-          <Input
-            id="city"
-            placeholder="Boston"
-            {...register("city")}
-          />
-          {errors.city && <p className="text-xs text-red-400">{errors.city.message}</p>}
+          <Input id="city" placeholder="Boston" {...register("city")} />
+          {errors.city && <p className="text-xs text-red-500">{errors.city.message}</p>}
         </div>
 
         <div className="grid grid-cols-2 gap-3">
           <div className="flex flex-col gap-2">
-            <Label htmlFor="state">State / Province <span className="text-zinc-600">(optional)</span></Label>
-            <Input
-              id="state"
-              placeholder="MA"
-              {...register("state")}
-            />
+            <Label htmlFor="state">
+              State / Province <span className="text-gray-400">(optional)</span>
+            </Label>
+            <Input id="state" placeholder="MA" {...register("state")} />
           </div>
 
           <div className="flex flex-col gap-2">
             <Label htmlFor="country">Country</Label>
-            <Input
-              id="country"
-              placeholder="United States"
-              {...register("country")}
-            />
+            <Input id="country" placeholder="United States" {...register("country")} />
             {errors.country && (
-              <p className="text-xs text-red-400">{errors.country.message}</p>
+              <p className="text-xs text-red-500">{errors.country.message}</p>
             )}
           </div>
         </div>
@@ -238,7 +227,7 @@ export function RegisterForm() {
           </SelectContent>
         </Select>
         {errors.notification_radius && (
-          <p className="text-xs text-red-400">{errors.notification_radius.message}</p>
+          <p className="text-xs text-red-500">{errors.notification_radius.message}</p>
         )}
       </div>
 
@@ -252,9 +241,7 @@ export function RegisterForm() {
         {isLoading ? (
           <Loader2 className="h-4 w-4 animate-spin" />
         ) : (
-          <>
-            Continue <ArrowRight className="h-4 w-4" />
-          </>
+          <>Continue <ArrowRight className="h-4 w-4" /></>
         )}
       </Button>
     </form>
